@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+from streamlit_gsheets import GSheetsConnection
 
 st.set_page_config(page_title="سجل بصمتك", page_icon="📝")
 
@@ -92,15 +93,20 @@ with st.form("visitor_form", clear_on_submit=True):
 
     if submit:
         if name:
-            # نكتفي بالاسم والتخصص فقط لضمان الظهور الفوري
-            new_entry = pd.DataFrame({"name": [name], "major": [major]})
-            file = "database.csv"
-
-            # حفظ البيانات بترميز يدعم العربي
-            if not os.path.isfile(file):
-                new_entry.to_csv(file, index=False, encoding='utf-8-sig')
-            else:
-                new_entry.to_csv(file, mode='a', header=False, index=False, encoding='utf-8-sig')
+        # 1. إنشاء الاتصال مع جوجل شيت
+        conn = st.connection("gsheets", type=GSheetsConnection)
+        
+        # 2. قراءة البيانات الحالية (عشان ما نمسح القديم)
+        existing_data = conn.read(worksheet="Sheet1")
+        
+        # 3. تجهيز السطر الجديد
+        new_entry = pd.DataFrame([{"name": name, "major": major}])
+        
+        # 4. دمج السطر الجديد مع البيانات السابقة
+        updated_df = pd.concat([existing_data, new_entry], ignore_index=True)
+        
+        # 5. التحديث الفعلي في جوجل شيت
+        conn.update(worksheet="Sheet1", data=updated_df)
 
             # رسالة النجاح بالخط الأسود كما طلبتِ
             st.markdown(
