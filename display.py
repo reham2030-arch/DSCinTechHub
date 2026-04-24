@@ -11,21 +11,21 @@ st.set_page_config(layout="wide", page_title="TechHub Display")
 # 2. دالة جلب البيانات
 def load_data():
     try:
+        # هنا نخبر البرنامج أن يأخذ الرابط "النظيف" من الـ Secrets
         conn = st.connection("gsheets", type=GSheetsConnection)
-        # استخدمي الرابط الأساسي بدون أي إضافات في آخره
-        url = "https://docs.google.com/spreadsheets/d/1Mn0tG4L6z28yWfIL_961Sv_PM7-ESYb5CZYcPN7My48/edit"
         
-        # القراءة وتحديد اسم الورقة
-        df = conn.read(spreadsheet=url, worksheet="Form Responses 1")
+        # القراءة بدون تحديد الرابط هنا (لأنه موجود في Secrets)
+        df = conn.read(worksheet="Form Responses 1")
         
-        # إعادة تسمية أول عمودين (الاسم والكلية) ليفهمها الكود
-        df = df.rename(columns={df.columns[0]: "name", df.columns[1]: "major"})
+        # التأكد من أسماء الأعمدة (الاسم أولاً ثم الكلية)
+        df.columns = ["name", "major", "timestamp"]
         
         return df
     except Exception as e:
-        # إذا فشل، سيظهر الخطأ هنا بشكل بسيط لنعرف مكانه
-        st.sidebar.error(f"Error: {e}")
+        # إذا استمر الخطأ، سيظهر لنا هنا لنعالجه
+        st.sidebar.error(f"تحقق من الربط: {e}")
         return pd.DataFrame(columns=["name", "major"])
+        # إذا فشل، سيظهر الخطأ هنا بشكل بسيط لنعرف مكانه
 
 # --- (باقي كود الـ CSS والأشكال السداسية كما هو دون تغيير) ---
 full_custom_style = """
