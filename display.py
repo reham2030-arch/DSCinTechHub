@@ -8,32 +8,26 @@ import plotly.express as px
 # 1. إعدادات الصفحة
 st.set_page_config(layout="wide", page_title="TechHub Display")
 
-# 2. دالة جلب البيانات من Google Sheets (التعديل الجوهري هنا)
+# 2. دالة جلب البيانات
 def load_data():
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
-        url = "https://docs.google.com/spreadsheets/d/1Mn0tG4L6z28yWfIL_961Sv_PM7-ESYb5CZYcPN7My48/edit#gid=1728246321"
+        # استخدمي الرابط الأساسي بدون أي إضافات في آخره
+        url = "https://docs.google.com/spreadsheets/d/1Mn0tG4L6z28yWfIL_961Sv_PM7-ESYb5CZYcPN7My48/edit"
         
-        # قراءة البيانات
+        # القراءة وتحديد اسم الورقة
         df = conn.read(spreadsheet=url, worksheet="Form Responses 1")
         
-        # هنا الحل: سنخبر بايثون أن يأخذ أول 3 أعمدة بغض النظر عن أسمائها العربية
-        # العمود 0: الاسم، العمود 1: الكلية، العمود 2: الطابع الزمني
-        df = df.iloc[:, [0, 1, 2]] 
-        
-        # الآن نعطيها أسماء برمجية (الإنجليزية) لكي يفهمها باقي الكود تحت
-        df.columns = ["name", "major", "timestamp"]
+        # إعادة تسمية أول عمودين (الاسم والكلية) ليفهمها الكود
+        df = df.rename(columns={df.columns[0]: "name", df.columns[1]: "major"})
         
         return df
     except Exception as e:
-        # إذا استمر الخطأ الأحمر، سيعرض لنا السبب بدقة في الجانب
-        st.sidebar.error(f"تحقق من الشيت: {e}")
-        return pd.DataFrame(columns=["name", "major"])
-        # في حال وجود خطأ يظهر تنبيه بسيط للمطور
-        st.sidebar.error(f"تحقق من اتصال الشيت: {e}")
+        # إذا فشل، سيظهر الخطأ هنا بشكل بسيط لنعرف مكانه
+        st.sidebar.error(f"Error: {e}")
         return pd.DataFrame(columns=["name", "major"])
 
-# 3. الستايل الشامل (CSS) - كما هو بجماله
+# --- (باقي كود الـ CSS والأشكال السداسية كما هو دون تغيير) ---
 full_custom_style = """
 <style>
     .stApp {
@@ -73,49 +67,24 @@ st.markdown(full_custom_style, unsafe_allow_html=True)
 st.markdown("<h1>✨ DataHub: بصمة حضور✨</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='color: #eee;'>يوم الأحد - 26 أبريل 2026</h3>", unsafe_allow_html=True)
 
-# 4. بناء الدائرة والأشكال
 df = load_data()
-colors = ["#224074", "#EF8D5A", "#44B18F", "#FF5C5C", "#7A57D1"]
 
 if not df.empty:
+    colors = ["#224074", "#EF8D5A", "#44B18F", "#FF5C5C", "#7A57D1"]
     bowl_html = '<div class="bowl-v3">'
     for i, row in df.iterrows():
-        # التأكد من عدم وجود قيم فارغة
         if pd.isna(row['name']): continue
-        
         random.seed(row['name'])
         c = colors[i % len(colors)]
-        t = random.randint(10, 80) # تعديل النطاق ليناسب حجم الوعاء الجديد
+        t = random.randint(10, 80)
         l = random.randint(10, 80)
-        
         bowl_html += f'<div class="hex-v3" style="background-color: {c}; top: {t}%; left: {l}%;">'
         bowl_html += f'{row["name"]}<br><span style="font-size: 10px; opacity: 0.9;">{row["major"]}</span>'
         bowl_html += '</div>'
     bowl_html += '</div>'
     st.markdown(bowl_html, unsafe_allow_html=True)
-
-    # 5. الإحصائيات (Bar Chart) - كما هي
-    st.markdown("<br><h3>📊 إحصائيات الكليات</h3>", unsafe_allow_html=True)
-    counts = df['major'].value_counts().reset_index()
-    counts.columns = ['الكلية', 'عدد البصمات']
-
-    fig = px.bar(
-        counts, x='الكلية', y='عدد البصمات',
-        text='عدد البصمات', color='الكلية',
-        color_discrete_sequence=colors
-    )
-    fig.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        font_color="white", showlegend=False, height=350,
-        xaxis=dict(showgrid=False, title="", tickfont=dict(size=14)),
-        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', title="")
-    )
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-    st.markdown(f"<p style='text-align: center; color: white; font-size: 20px; font-weight: bold;'>إجمالي البصمات: {len(df)}</p>", unsafe_allow_html=True)
-
 else:
     st.markdown("<div style='text-align:center; padding: 50px;'><h3>بانتظار أول بصمة في الوعاء... ⏳</h3></div>", unsafe_allow_html=True)
 
-# 6. التحديث كل 10 ثوانٍ (أفضل للأداء)
-time.sleep(4)
+time.sleep(10)
 st.rerun()
