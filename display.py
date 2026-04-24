@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import random
 import time
+import plotly.express as px
 
 # 1. إعدادات الصفحة
 st.set_page_config(layout="wide", page_title="DataHub Display")
