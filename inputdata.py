@@ -86,7 +86,7 @@ if submit:
         try:
             # إرسال البيانات بدون أن يشعر المستخدم
             requests.post(form_url, data=payload)
-            st.success("تم تسجيل بصمتك بنجاح! ✨")
+            st.success("سعدنا بمرورك .. اسمك الآن يزين لوحة زوّارنا! ✨"")
             st.balloons()
         except:
             st.error("عذراً، حدث خطأ في الاتصال.")
