@@ -94,11 +94,14 @@ with st.form("visitor_form", clear_on_submit=True):
     # تأكدي أن كل الأسطر بعد الـ if مائلة لليمين بنفس المقدار
 if submit:
     if name and major:
-        # إنشاء الاتصال
-        # بدلاً من سطر 98 و 101 القديم، جربي هذا التنسيق:
-        url = "https://docs.google.com/spreadsheets/d/1Mn0tG4L6z28yWfIL_961Sv_PM7-ESYb5CZYcPN7My48/edit?usp=sharing"
+        # 1. تجهيز الرابط بصيغة التصدير المباشر
+        url = "https://docs.google.com/spreadsheets/d/1Mn0tG4L6z28yWfIL_961Sv_PM7-ESYb5CZYcPN7My48/export?format=csv"
+
+# 2. قراءة البيانات باستخدام pandas مباشرة (أسرع وأضمن)
+        df = pd.read_csv(url)
+
+# 3. إعداد الاتصال فقط لعملية التحديث (Update)
         conn = st.connection("gsheets", type=GSheetsConnection)
-        df = conn.read(spreadsheet=url, worksheet="Sheet1")
         
         # تجهيز السطر الجديد
         new_data = pd.DataFrame([{"name": name, "major": major}])
