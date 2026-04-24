@@ -44,7 +44,7 @@ def load_data():
         return pd.DataFrame(columns=["name", "major"])
 
 st.markdown("<h1>DSC سجــل حضــورك ..وكــن جــزءاً مــن قصــة</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='color: #eee;'>يوم الاثنين - 27 أبريل 2026</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='color: #eee;'>يوم الاحد - 26 أبريل 2026</h3>", unsafe_allow_html=True)
 
 # 4. عرض الوعاء (الدائرة)
 df = load_data()
@@ -65,7 +65,7 @@ with col_display:
             bowl_html += f'{row["name"]}<br><span style="font-size: 10px; opacity: 0.9;">{row["major"]}</span>'
             bowl_html += '</div>'
     else:
-        bowl_html += '<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white; opacity: 0.5;"><h3>⏳ بانتظار البصمات...</h3></div>'
+        bowl_html += '<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white; opacity: 0.5;"><h3>⏳كن الشرارة الاولى .. ضع بصمتك الان</h3></div>'
     bowl_html += '</div>'
     st.markdown(bowl_html, unsafe_allow_html=True)
 
