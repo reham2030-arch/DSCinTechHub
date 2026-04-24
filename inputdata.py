@@ -91,32 +91,20 @@ with st.form("visitor_form", clear_on_submit=True):
     major = st.selectbox("الكلية",colleges_list )
     submit = st.form_submit_button("إرسال")
 
-    if submit:
-        if name:
-        # 1. إنشاء الاتصال مع جوجل شيت
+    # تأكدي أن كل الأسطر بعد الـ if مائلة لليمين بنفس المقدار
+if submit:
+    if name and major:
+        # هذه الأسطر يجب أن تكون تحت الـ if بمسافة واحدة
         conn = st.connection("gsheets", type=GSheetsConnection)
-        
-        # 2. قراءة البيانات الحالية (عشان ما نمسح القديم)
         existing_data = conn.read(worksheet="Sheet1")
         
-        # 3. تجهيز السطر الجديد
-        new_entry = pd.DataFrame([{"name": name, "major": major}])
+        new_row = pd.DataFrame([{"name": name, "major": major}])
+        updated_df = pd.concat([existing_data, new_row], ignore_index=True)
         
-        # 4. دمج السطر الجديد مع البيانات السابقة
-        updated_df = pd.concat([existing_data, new_entry], ignore_index=True)
-        
-        # 5. التحديث الفعلي في جوجل شيت
         conn.update(worksheet="Sheet1", data=updated_df)
-
-            # رسالة النجاح بالخط الأسود كما طلبتِ
-            st.markdown(
-                """
-                <div style="color: #000000; text-align: center; font-weight: bold; font-size: 18px;">
-                    شكراً! تم تحديث التصميم بنجاح ✨
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
+        
+        st.success(f"شكراً {name}! تم حفظ بصمتك بنجاح ✨")
+        st.balloons()
         else:
             # هذا الجزء يتفعل إذا ضغط إرسال والاسم فارغ
             st.warning("نسيـت اسمـك يارهيــب")
