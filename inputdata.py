@@ -95,10 +95,10 @@ with st.form("visitor_form", clear_on_submit=True):
 if submit:
     if name and major:
         # إنشاء الاتصال
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        
-        # قراءة البيانات
-        df = conn.read(worksheet="Sheet1")
+        # بدلاً من سطر 98 و 101 القديم، جربي هذا التنسيق:
+       url = "https://docs.google.com/spreadsheets/d/1Mn0tG4L6z28yWfIL_961Sv_PM7-ESYb5CZYcPN7My48/edit?usp=sharing"
+       conn = st.connection("gsheets", type=GSheetsConnection)
+       df = conn.read(spreadsheet=url, worksheet="Sheet1")
         
         # تجهيز السطر الجديد
         new_data = pd.DataFrame([{"name": name, "major": major}])
