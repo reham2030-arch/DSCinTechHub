@@ -105,6 +105,6 @@ if submit:
         
         st.success(f"شكراً {name}! تم حفظ بصمتك بنجاح ✨")
         st.balloons()
-        else:
+    else:
             # هذا الجزء يتفعل إذا ضغط إرسال والاسم فارغ
             st.warning("نسيـت اسمـك يارهيــب")
