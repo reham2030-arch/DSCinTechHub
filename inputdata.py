@@ -92,7 +92,7 @@ with st.form("visitor_form", clear_on_submit=True):
     submit = st.form_submit_button("إرسال")
 
     # تأكدي أن كل الأسطر بعد الـ if مائلة لليمين بنفس المقدار
-if submit_button:
+if submit:
     if name and major:
         # إنشاء الاتصال
         conn = st.connection("gsheets", type=GSheetsConnection)
