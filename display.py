@@ -11,21 +11,24 @@ st.set_page_config(layout="wide", page_title="TechHub Display")
 # 2. دالة جلب البيانات من Google Sheets (التعديل الجوهري هنا)
 def load_data():
     try:
-        # إنشاء الاتصال بمكتبة gsheets
         conn = st.connection("gsheets", type=GSheetsConnection)
+        url = "https://docs.google.com/spreadsheets/d/1Mn0tG4L6z28yWfIL_961Sv_PM7-ESYb5CZYcPN7My48/edit#gid=1728246321"
         
-        # رابط الشيت الخاص بك
-        url = "https://docs.google.com/spreadsheets/d/1Mn0tG4L6z28yWfIL_961Sv_PM7-ESYb5CZYcPN7My48/edit?usp=sharing"
-        
-        # القراءة من الورقة الظاهرة في صورتك "Form Responses 1"
+        # قراءة البيانات
         df = conn.read(spreadsheet=url, worksheet="Form Responses 1")
         
-        # حسب الصورة: العمود الأول الاسم، الثاني الكلية، الثالث الوقت
-        # سنقوم بتسميتها ليتعرف عليها الكود بالأسفل
+        # هنا الحل: سنخبر بايثون أن يأخذ أول 3 أعمدة بغض النظر عن أسمائها العربية
+        # العمود 0: الاسم، العمود 1: الكلية، العمود 2: الطابع الزمني
+        df = df.iloc[:, [0, 1, 2]] 
+        
+        # الآن نعطيها أسماء برمجية (الإنجليزية) لكي يفهمها باقي الكود تحت
         df.columns = ["name", "major", "timestamp"]
         
         return df
     except Exception as e:
+        # إذا استمر الخطأ الأحمر، سيعرض لنا السبب بدقة في الجانب
+        st.sidebar.error(f"تحقق من الشيت: {e}")
+        return pd.DataFrame(columns=["name", "major"])
         # في حال وجود خطأ يظهر تنبيه بسيط للمطور
         st.sidebar.error(f"تحقق من اتصال الشيت: {e}")
         return pd.DataFrame(columns=["name", "major"])
