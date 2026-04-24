@@ -4,6 +4,7 @@ import random
 import time
 import plotly.express as px
 
+
 # 1. إعدادات الصفحة
 st.set_page_config(layout="wide", page_title="TechHub Display")
 
@@ -42,68 +43,49 @@ def load_data():
     except:
         return pd.DataFrame(columns=["name", "major"])
 
-st.markdown("<h1>✨ DataHub: بصمة حضور✨</h1>", unsafe_allow_html=True)
+st.markdown("<h1>DSC سجــل حضــورك ..وكــن جــزءاً مــن قصــة</h1>", unsafe_allow_html=True)
 st.markdown("<h3 style='color: #eee;'>يوم الاثنين - 27 أبريل 2026</h3>", unsafe_allow_html=True)
 
 # 4. عرض الوعاء (الدائرة)
 df = load_data()
-bowl_html = '<div class="bowl-v3">'
-if not df.empty:
-    colors = ["#224074", "#EF8D5A", "#44B18F", "#FF5C5C", "#7A57D1"]
-    for i, row in df.iterrows():
-        if pd.isna(row['name']): continue
-        random.seed(str(row['name']))
-        c = colors[i % len(colors)]
-        t = random.randint(15, 75)
-        l = random.randint(15, 75)
-        bowl_html += f'<div class="hex-v3" style="background-color: {c}; top: {t}%; left: {l}%;">'
-        bowl_html += f'{row["name"]}<br><span style="font-size: 10px; opacity: 0.9;">{row["major"]}</span>'
-        bowl_html += '</div>'
-else:
-    bowl_html += '<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white; opacity: 0.5;"><h3>⏳ بانتظار البصمات...</h3></div>'
-bowl_html += '</div>'
-st.markdown(bowl_html, unsafe_allow_html=True)
+# --- التعديل الجديد: وضع الوعاء والإحصائيات جنباً إلى جنب ---
+col_display, col_stats = st.columns([1.5, 1]) # تقسيم الصفحة لعمودين
 
-# 5. الإحصائيات (أجبرناها على الظهور بشكل أجمل)
-# 5. الإحصائيات (نسخة مطابقة للصورة)
-st.markdown("<br><h3 style='text-align: center; color: white;'>📊 إحصائيات الكليات</h3>", unsafe_allow_html=True)
+with col_display:
+    # 4. عرض الوعاء (الدائرة) في العمود الأيمن
+    bowl_html = '<div class="bowl-v3" style="width: 100%; height: 500px;">' # تعديل العرض ليناسب العمود
+    if not df.empty:
+        colors = ["#224074", "#EF8D5A", "#44B18F", "#FF5C5C", "#7A57D1"]
+        for i, row in df.iterrows():
+            if pd.isna(row['name']): continue
+            random.seed(str(row['name']))
+            c = colors[i % len(colors)]
+            t, l = random.randint(15, 75), random.randint(15, 75)
+            bowl_html += f'<div class="hex-v3" style="background-color: {c}; top: {t}%; left: {l}%;">'
+            bowl_html += f'{row["name"]}<br><span style="font-size: 10px; opacity: 0.9;">{row["major"]}</span>'
+            bowl_html += '</div>'
+    else:
+        bowl_html += '<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: white; opacity: 0.5;"><h3>⏳ بانتظار البصمات...</h3></div>'
+    bowl_html += '</div>'
+    st.markdown(bowl_html, unsafe_allow_html=True)
 
-if not df.empty:
-    # حساب عدد البصمات لكل كلية
-    counts = df['major'].value_counts().reset_index()
-    counts.columns = ['الكلية', 'العدد']
-    
-    # إنشاء الرسم البياني الملون
-    fig = px.bar(
-        counts, 
-        x='الكلية', 
-        y='العدد', 
-        color='الكلية', 
-        text='العدد',
-        color_discrete_sequence=["#224074", "#EF8D5A", "#44B18F", "#FF5C5C", "#7A57D1"]
-    )
-    
-    # تعديل المظهر ليكون شفافاً وبألوان بيضاء للنصوص
-    fig.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font_color="white",
-        showlegend=False,
-        height=400,
-        xaxis=dict(showgrid=False, title="", tickfont=dict(size=14)),
-        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', title="")
-    )
-    
-    # وضع الأرقام فوق الأعمدة
-    fig.update_traces(textposition='outside', marker_line_width=0)
-    
-    # عرض الرسم البياني
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-    
-    # عرض إجمالي البصمات في المنتصف
-    st.markdown(f"<p style='text-align: center; color: white; font-size: 24px; font-weight: bold;'>إجمالي البصمات: {len(df)}</p>", unsafe_allow_html=True)
-else:
-    st.info("بانتظار البيانات لرسم الإحصائيات...")
+with col_stats:
+    # 5. الإحصائيات في العمود الأيسر
+    st.markdown('<h3 style="color: white; text-align: right;">اكثــر الكليــات تفـــاعلاً</h3>', unsafe_allow_html=True)
+    if not df.empty:
+        counts = df['major'].value_counts().reset_index()
+        counts.columns = ['الكلية', 'العدد']
+        
+        fig = px.bar(counts, x='العدد', y='الكلية', orientation='h', # جعل الرسم أفقي ليناسب المساحة الجانبية
+                     color='الكلية', text='العدد',
+                     color_discrete_sequence=["#224074", "#EF8D5A", "#44B18F", "#FF5C5C", "#7A57D1"])
+        
+        fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                          font_color="white", showlegend=False, height=450,
+                          xaxis=dict(showgrid=False, title=""), yaxis=dict(showgrid=False, title=""))
+        
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.markdown(f"<p style='text-align: center; color: white; font-size: 20px;'> عـــدد زوارنـــا اليـــوم: {len(df)}</p>", unsafe_allow_html=True)
 
 time.sleep(5)
 st.rerun()
