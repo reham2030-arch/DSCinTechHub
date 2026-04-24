@@ -6,7 +6,7 @@ import plotly.express as px
 
 
 # 1. إعدادات الصفحة
-st.set_page_config(layout="wide", page_title="DSCinTechHub")
+st.set_page_config(layout="wide", page_title="DSCinTechHub", page-icon="💻")
 
 # 2. الستايل (CSS) - نضعه في البداية لضمان ظهور التصميم فوراً
 st.markdown("""
