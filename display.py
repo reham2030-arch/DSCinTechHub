@@ -58,7 +58,7 @@ st.markdown(full_custom_style, unsafe_allow_html=True)
 
 # 4. العناوين والتاريخ (هنا تأكدت من وجود التاريخ)
 st.markdown("<h1>✨ DataHub: بصمة حضور✨</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='color: #eee;'>يوم الأحد - 26 أبريل 2026</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='color: #eee;'>يوم الأحد - 27 أبريل 2026</h3>", unsafe_allow_html=True)
 
 # 5. بناء الدائرة والأشكال
 df = load_data()
