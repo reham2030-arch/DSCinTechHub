@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # 1. إعداد الصفحة
-st.set_page_config(page_title="سجل بصمتك", page_icon="📝")
+st.set_page_config(page_title="سجل بصمتك", page_icon="⭐")
 
 # 2. تنسيق الخلفية والألوان (تنسيقك الأصلي 10/10)
 gradient_style = """
