@@ -64,18 +64,45 @@ bowl_html += '</div>'
 st.markdown(bowl_html, unsafe_allow_html=True)
 
 # 5. الإحصائيات (أجبرناها على الظهور بشكل أجمل)
-st.markdown("<br><h3>📊 إحصائيات الكليات</h3>", unsafe_allow_html=True)
+# 5. الإحصائيات (نسخة مطابقة للصورة)
+st.markdown("<br><h3 style='text-align: center; color: white;'>📊 إحصائيات الكليات</h3>", unsafe_allow_html=True)
+
 if not df.empty:
+    # حساب عدد البصمات لكل كلية
     counts = df['major'].value_counts().reset_index()
     counts.columns = ['الكلية', 'العدد']
-    fig = px.bar(counts, x='الكلية', y='العدد', color='الكلية', text='العدد',
-                 color_discrete_sequence=["#EF8D5A", "#44B18F", "#224074"])
-    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color="white")
-    st.plotly_chart(fig, use_container_width=True)
+    
+    # إنشاء الرسم البياني الملون
+    fig = px.bar(
+        counts, 
+        x='الكلية', 
+        y='العدد', 
+        color='الكلية', 
+        text='العدد',
+        color_discrete_sequence=["#224074", "#EF8D5A", "#44B18F", "#FF5C5C", "#7A57D1"]
+    )
+    
+    # تعديل المظهر ليكون شفافاً وبألوان بيضاء للنصوص
+    fig.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font_color="white",
+        showlegend=False,
+        height=400,
+        xaxis=dict(showgrid=False, title="", tickfont=dict(size=14)),
+        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', title="")
+    )
+    
+    # وضع الأرقام فوق الأعمدة
+    fig.update_traces(textposition='outside', marker_line_width=0)
+    
+    # عرض الرسم البياني
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    
+    # عرض إجمالي البصمات في المنتصف
+    st.markdown(f"<p style='text-align: center; color: white; font-size: 24px; font-weight: bold;'>إجمالي البصمات: {len(df)}</p>", unsafe_allow_html=True)
 else:
-    st.info("سيتم عرض الرسم البياني هنا بمجرد وصول أول بصمة.")
-
-st.markdown(f"<p style='text-align: center; color: white; font-size: 20px;'>إجمالي البصمات الحالية: {len(df)}</p>", unsafe_allow_html=True)
+    st.info("بانتظار البيانات لرسم الإحصائيات...")
 
 time.sleep(10)
 st.rerun()
