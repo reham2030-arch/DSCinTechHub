@@ -104,5 +104,5 @@ if not df.empty:
 else:
     st.info("بانتظار البيانات لرسم الإحصائيات...")
 
-time.sleep(10)
+time.sleep(5)
 st.rerun()
