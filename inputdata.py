@@ -92,18 +92,24 @@ with st.form("visitor_form", clear_on_submit=True):
     submit = st.form_submit_button("إرسال")
 
     # تأكدي أن كل الأسطر بعد الـ if مائلة لليمين بنفس المقدار
-if submit:
+if submit_button:
     if name and major:
-        # هذه الأسطر يجب أن تكون تحت الـ if بمسافة واحدة
+        # إنشاء الاتصال
         conn = st.connection("gsheets", type=GSheetsConnection)
-        existing_data = conn.read(worksheet="Sheet1")
         
-        new_row = pd.DataFrame([{"name": name, "major": major}])
-        updated_df = pd.concat([existing_data, new_row], ignore_index=True)
+        # قراءة البيانات
+        df = conn.read(worksheet="Sheet1")
         
+        # تجهيز السطر الجديد
+        new_data = pd.DataFrame([{"name": name, "major": major}])
+        
+        # دمج البيانات
+        updated_df = pd.concat([df, new_data], ignore_index=True)
+        
+        # التحديث (تأكدي من وجود هذه السطر)
         conn.update(worksheet="Sheet1", data=updated_df)
         
-        st.success(f"شكراً {name}! تم حفظ بصمتك بنجاح ✨")
+        st.success("تم تسجيل بصمتك!")
         st.balloons()
     else:
             # هذا الجزء يتفعل إذا ضغط إرسال والاسم فارغ
