@@ -44,7 +44,7 @@ def load_data():
         return pd.DataFrame(columns=["name", "major"])
 
 st.markdown("<h1>DSC سجــل حضــورك ..وكــن جــزءاً مــن قصــة</h1>", unsafe_allow_html=True)
-st.markdown("<h3 style='color: #eee;'>يوم الاحد - 26 أبريل 2026</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='color: #eee;'>يوم الاثنين - 27 أبريل 2026</h3>", unsafe_allow_html=True)
 
 # 4. عرض الوعاء (الدائرة)
 df = load_data()
